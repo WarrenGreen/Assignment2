@@ -3,7 +3,7 @@
  */
 public class Space {
   int value;
-  String ownedBy;
+  int ownedBy = -1;
 
   public Space(int value) {
     this.value = value;

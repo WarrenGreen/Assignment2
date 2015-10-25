@@ -17,8 +17,8 @@ public class Game {
     readFile(file);
 
     players = new ArrayList<>();
-    Player p1 = new Player(true, board);
-    Player p2 = new Player(false, board);
+    Player p1 = new MinimaxPlayer(true, board);
+    Player p2 = new MinimaxPlayer(false, board);
     players.add(p1::yourTurn);
     players.add(p2::yourTurn);
 
@@ -53,7 +53,7 @@ public class Game {
   public void start() {
     int i=0;
     while(!gameOver()) {
-      board = (Space[][]) players.get(i).apply(board);
+      MinState m = (MinState) players.get(i).apply(board);
       i++;
       if(i>=board.length)
         i=0;
@@ -63,7 +63,7 @@ public class Game {
   private boolean gameOver() {
     for(int i=0;i<board.length;i++) {
       for(int j=0;j<board[0].length;j++) {
-        if(board[i][j].ownedBy == null)
+        if(board[i][j].ownedBy == -1)
           return false;
       }
     }
