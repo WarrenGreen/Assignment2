@@ -1,7 +1,7 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * Created by wsgreen on 10/15/15.
@@ -9,6 +9,7 @@ import java.util.Set;
 public class LetterBased {
   private String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   private Map<String, TrieNode> map;
+  private PrintWriter out=null;
 
   public LetterBased() {
     map = new HashMap<>();
@@ -30,21 +31,42 @@ public class LetterBased {
       }
       map.put(entry.getKey(), root);
     }
+
+    try {
+      out = new PrintWriter("./letterTrace.txt");
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      System.exit(-1);
+    }
   }
 
   public Set<String> getWord(String word) {
+    if(word.isEmpty())
+      out.print("root");
+    else
+      out.print(" -> "+word.charAt(word.length() - 1));
+
     Set<String> ret = new HashSet<>();
     if(word.length() == Kicker.length){
       ret.add(word);
+      out.println(" (found word: "+word+")");
       return ret;
     }
 
+    boolean hit = false;
     for(int i=0;i<alpha.length();i++) {
       char c = alpha.charAt(i);
       if(isValid(word+c)) {
+        hit = true;
         ret.addAll(getWord(word + c));
       }
     }
+
+    if(!hit) {
+      out.println();
+    }
+
+
 
     return ret;
   }

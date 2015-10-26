@@ -1,11 +1,31 @@
-import oracle.jrockit.jfr.StringConstantPool;
-
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by wsgreen on 10/15/15.
  */
 public class WordBased {
+  private PrintWriter out=null;
+
+  public WordBased() {
+    try {
+      out = new PrintWriter("./wordTrace.txt");
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      System.exit(-1);
+    }
+
+    out.print("Search order: ");
+    for(String category: Kicker.problem.keySet()) {
+      out.print(" -> "+category);
+    }
+    out.println();
+    out.print("root");
+  }
+
 
   public Set<String> getWord() {
     char[] w = new char[Kicker.length];
@@ -16,6 +36,7 @@ public class WordBased {
   private Set<String> getWord(char[] word) {
     Set<String> ret = new HashSet<>();
     if(isFilled(word)) {
+      out.println(" (found word:  "+String.valueOf(word)+")");
       ret.add(String.valueOf(word));
       return ret;
     }
@@ -25,13 +46,19 @@ public class WordBased {
       if(isCatValid(word, category))
         continue;
       else{
+        boolean hit = false;
         for(String s: words){
           char[] temp = add(word, s, category);
           if(isValid(temp)){
+            out.print(" -> "+s);
+            hit = true;
             ret.addAll(getWord(temp));
           }
         }
-
+        if(!hit) {
+          out.println();
+          return ret;
+        }
       }
     }
 
